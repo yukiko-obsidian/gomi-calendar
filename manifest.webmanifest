@@ -1,0 +1,19 @@
+{
+  "name": "ごみ収集カレンダー",
+  "short_name": "ごみカレンダー",
+  "description": "所沢市 北野南・小手指南地区のごみ収集日カレンダー",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "id": "gomi-calendar",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3efe7",
+  "theme_color": "#f3efe7",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

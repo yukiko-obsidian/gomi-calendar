@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ごみ収集カレンダー | 北野南・小手指南地区</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="所沢市 北野南・小手指南地区のごみ収集日カレンダー（個人用）">
+<meta name="theme-color" content="#f3efe7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ごみカレンダー">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f3efe7;
+    --paper: #ffffff;
+    --ink: #2f2a24;
+    --ink-soft: #6b6459;
+    --line: #e4ddcf;
+    --accent: #4a7c6f;
+
+    --burnable-bg: #f7c9c4;
+    --burnable-ink: #7a2e26;
+    --plastic-bg: #cdea9b;
+    --plastic-ink: #33520f;
+    --pet-bg: #fff2a8;
+    --pet-ink: #6b5900;
+    --bulky-bg: #cdc4ee;
+    --bulky-ink: #3a2f70;
+    --cans-bg: #b7ecec;
+    --cans-ink: #0e5a5a;
+    --small-bg: #a9e8c9;
+    --small-ink: #0c4b30;
+    --paper-bg: #ffcf94;
+    --paper-ink: #7a3f00;
+    --none-bg: #eeeae1;
+    --none-ink: #9a9284;
+  }
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  html{
+    background: var(--bg);
+    -webkit-text-size-adjust: 100%;
+  }
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(47,42,36,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+    min-height: 100vh;
+    padding:
+      calc(20px + env(safe-area-inset-top))
+      calc(14px + env(safe-area-inset-right))
+      calc(48px + env(safe-area-inset-bottom))
+      calc(14px + env(safe-area-inset-left));
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  .wrap{ max-width: 480px; margin: 0 auto; }
+
+  header{ text-align:center; margin-bottom: 18px; padding-top: 6px; }
+  .eyebrow{
+    font-size: 12px; letter-spacing: .14em; color: var(--ink-soft);
+    text-transform: uppercase; font-weight: 500;
+  }
+  h1{
+    font-family: "Zen Maru Gothic", sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    margin: 4px 0 2px;
+    letter-spacing: .01em;
+  }
+  .area{ font-size: 13px; color: var(--ink-soft); }
+
+  .today-card{
+    border-radius: 26px;
+    padding: 26px 22px 22px;
+    background: var(--none-bg);
+    color: var(--none-ink);
+    box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 14px 30px -18px rgba(47,42,36,.35);
+    border: 1px solid rgba(0,0,0,.04);
+    transition: background .35s ease, color .35s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .today-card .date-row{
+    display:flex; align-items:baseline; justify-content:space-between;
+    font-family: "Zen Maru Gothic", sans-serif;
+  }
+  .today-card .weekday-badge{
+    font-size: 13px; font-weight: 700;
+    background: rgba(255,255,255,.55);
+    padding: 3px 10px; border-radius: 999px;
+  }
+  .today-card .today-label{
+    font-size: 12px; font-weight: 700; letter-spacing: .08em;
+    opacity: .75;
+  }
+  .today-card .date-num{
+    font-size: 15px; font-weight: 700; margin-top: 2px; opacity: .85;
+  }
+  .today-card .icon{
+    font-size: 46px; line-height: 1; margin: 14px 0 6px;
+  }
+  .today-card .type-name{
+    font-family: "Zen Maru Gothic", sans-serif;
+    font-weight: 900;
+    font-size: 30px;
+    line-height: 1.25;
+  }
+  .today-card .type-sub{
+    font-size: 12.5px; margin-top: 4px; opacity: .8;
+  }
+
+  .strip{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 16px;
+  }
+  .day-chip{
+    border-radius: 14px;
+    padding: 8px 4px 9px;
+    text-align: center;
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+  .day-chip.is-today{ outline: 2px solid var(--ink); outline-offset: -2px; }
+  .day-chip .dow{ font-size: 10.5px; color: var(--ink-soft); font-weight: 500; }
+  .day-chip .dnum{ font-size: 15px; font-weight: 700; margin: 2px 0 5px; }
+  .day-chip .dot{
+    width: 18px; height: 18px; margin: 0 auto;
+    border-radius: 6px;
+  }
+  .day-chip .glabel{
+    font-size: 8.5px; margin-top: 4px; color: var(--ink-soft);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  section.panel{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    margin-top: 18px;
+    padding: 16px 16px 18px;
+  }
+  .panel h2{
+    font-family: "Zen Maru Gothic", sans-serif;
+    font-size: 14px; font-weight: 700; margin: 0 0 10px;
+    display:flex; align-items:center; gap:6px;
+  }
+
+  .month-nav{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 10px;
+  }
+  .month-nav button{
+    border: none; background: var(--bg); width: 30px; height: 30px;
+    border-radius: 999px; font-size: 15px; cursor: pointer; color: var(--ink);
+    -webkit-appearance: none; appearance: none; font-family: inherit;
+  }
+  .month-nav .m-title{ font-weight: 700; font-size: 14px; font-family:"Zen Maru Gothic",sans-serif; }
+
+  .grid{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    font-size: 11px;
+  }
+  .grid .dow-h{ text-align:center; color: var(--ink-soft); font-size: 10px; padding-bottom: 4px; font-weight: 500;}
+  .cell{
+    aspect-ratio: 1 / 1.02;
+    border-radius: 9px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background: #faf8f3;
+  }
+  .cell.blank{ background: transparent; }
+  .cell .cn{ font-weight: 700; font-size: 12px; }
+  .cell .cl{ font-size: 7.2px; margin-top: 1px; text-align:center; line-height:1.15; padding:0 2px;}
+  .cell.today-mark{ box-shadow: 0 0 0 2px var(--ink) inset; }
+
+  .legend{
+    display:flex; flex-wrap:wrap; gap: 6px 10px; margin-top: 14px;
+  }
+  .legend .li{ display:flex; align-items:center; gap:5px; font-size: 10.5px; color: var(--ink-soft); }
+  .legend .sw{ width:10px; height:10px; border-radius:3px; flex:none; }
+
+  .rules{ font-size: 11.5px; color: var(--ink-soft); line-height: 1.8; }
+  .rules b{ color: var(--ink); }
+
+  footer{
+    text-align:center; margin-top: 22px; font-size: 10.5px; color: var(--ink-soft);
+    line-height: 1.7;
+  }
+  footer a{ color: var(--accent); }
+
+  .out-of-range{
+    font-size: 12px; text-align:center; color: var(--ink-soft); padding: 6px 0 2px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Gomi Calendar · 令和8年度</div>
+    <h1>🗑️ ごみ収集カレンダー</h1>
+    <div class="area">所沢市 北野南・小手指南地区</div>
+  </header>
+
+  <div class="today-card" id="todayCard">
+    <div class="date-row">
+      <span class="today-label">TODAY</span>
+      <span class="weekday-badge" id="todayDow">—</span>
+    </div>
+    <div class="date-num" id="todayDate">—</div>
+    <div class="icon" id="todayIcon">—</div>
+    <div class="type-name" id="todayType">読み込み中…</div>
+    <div class="type-sub" id="todaySub"></div>
+  </div>
+
+  <div class="strip" id="weekStrip"></div>
+
+  <section class="panel">
+    <h2>📅 月間カレンダー</h2>
+    <div class="month-nav">
+      <button id="prevM">‹</button>
+      <span class="m-title" id="monthTitle">—</span>
+      <button id="nextM">›</button>
+    </div>
+    <div class="grid" id="monthGrid"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="panel">
+    <h2>📋 収集ルール</h2>
+    <div class="rules">
+      <b>燃やせるごみ</b>：毎週 火・金曜日<br>
+      <b>容器包装プラスチック</b>：毎週 水曜日<br>
+      <b>小型家電/古着・古布</b>：第1月曜日<br>
+      <b>ペットボトル</b>：第2・第4月曜日<br>
+      <b>新聞・雑誌・段ボール</b>：第3月曜日<br>
+      <b>びん・缶・スプレー缶</b>：第1・第3木曜日<br>
+      <b>破砕ごみ・有害ごみ</b>：第2・第4木曜日<br>
+      <span style="opacity:.75">※第5月曜・第5木曜は収集なし。年末年始（12/30, 1/1）は例外で収集なし。</span>
+    </div>
+  </section>
+
+  <footer>
+    対応期間：2026年4月1日〜2027年3月31日（令和8年度）<br>
+    収集に関する問合せ：収集管理事務所 04-2946-5353<br>
+    ※実際の収集日はごみ集積所の掲示や所沢市の発表を優先してください。
+  </footer>
+</div>
+
+<script>
+const TYPES = {
+  burnable: { name:'燃やせるごみ', sub:'Combustible', icon:'🔥', bg:'--burnable-bg', ink:'--burnable-ink' },
+  plastic:  { name:'容器包装プラスチック', sub:'容プラ', icon:'♻️', bg:'--plastic-bg', ink:'--plastic-ink' },
+  pet:      { name:'ペットボトル', sub:'PET Bottles', icon:'🧴', bg:'--pet-bg', ink:'--pet-ink' },
+  bulky:    { name:'破砕ごみ・有害ごみ', sub:'Unburnable / Hazardous', icon:'🪑', bg:'--bulky-bg', ink:'--bulky-ink' },
+  cans:     { name:'びん・缶・スプレー缶', sub:'Bottles, Cans, Spray cans', icon:'🥫', bg:'--cans-bg', ink:'--cans-ink' },
+  small:    { name:'小型家電/古着・古布', sub:'Small appliances / Used clothing', icon:'👕', bg:'--small-bg', ink:'--small-ink' },
+  paper:    { name:'新聞・雑誌・段ボール', sub:'Newspapers, Magazines, Cardboard', icon:'📦', bg:'--paper-bg', ink:'--paper-ink' },
+};
+const NONE = { name:'収集なし', sub:'', icon:'🌤️', bg:'--none-bg', ink:'--none-ink' };
+
+const RANGE_START = new Date(2026,3,1);   // 2026-04-01
+const RANGE_END   = new Date(2027,2,31);  // 2027-03-31
+
+const DOW_JP = ['日','月','火','水','木','金','土'];
+
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+
+function nthWeekdayOfMonth(d){ return Math.floor((d.getDate()-1)/7)+1; }
+
+// explicit real-world exceptions (year-end / New Year), verified against the official calendar
+const EXCEPTIONS = new Set(['2026-12-30','2027-01-01']);
+
+function getGomi(d){
+  if (EXCEPTIONS.has(ymd(d))) return null;
+  const dow = d.getDay(); // 0 Sun ... 6 Sat
+  const nth = nthWeekdayOfMonth(d);
+  if (dow===2 || dow===5) return TYPES.burnable;      // Tue, Fri
+  if (dow===3) return TYPES.plastic;                   // Wed
+  if (dow===1){                                         // Mon
+    if (nth===1) return TYPES.small;
+    if (nth===2 || nth===4) return TYPES.pet;
+    if (nth===3) return TYPES.paper;
+    return null;
+  }
+  if (dow===4){                                         // Thu
+    if (nth===1 || nth===3) return TYPES.cans;
+    if (nth===2 || nth===4) return TYPES.bulky;
+    return null;
+  }
+  return null; // Sat, Sun
+}
+
+function inRange(d){ return d >= RANGE_START && d <= RANGE_END; }
+
+function applyCardColor(el, type){
+  el.style.background = `var(${type.bg})`;
+  el.style.color = `var(${type.ink})`;
+}
+
+function renderToday(){
+  const now = new Date();
+  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const card = document.getElementById('todayCard');
+  document.getElementById('todayDow').textContent = DOW_JP[d.getDay()] + '曜日';
+  document.getElementById('todayDate').textContent =
+    `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+
+  if (!inRange(d)){
+    applyCardColor(card, NONE);
+    document.getElementById('todayIcon').textContent = '📭';
+    document.getElementById('todayType').textContent = '対応期間外です';
+    document.getElementById('todaySub').textContent = '2026年4月〜2027年3月のカレンダーです';
+    return;
+  }
+  const t = getGomi(d) || NONE;
+  applyCardColor(card, t);
+  document.getElementById('todayIcon').textContent = t.icon;
+  document.getElementById('todayType').textContent = t.name;
+  document.getElementById('todaySub').textContent = t.sub;
+}
+
+function renderWeekStrip(){
+  const now = new Date();
+  const base = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dow = base.getDay();
+  const monday = new Date(base);
+  monday.setDate(base.getDate() - ((dow+6)%7)); // back up to Monday
+  const strip = document.getElementById('weekStrip');
+  strip.innerHTML = '';
+  for (let i=0;i<7;i++){
+    const d = new Date(monday);
+    d.setDate(monday.getDate()+i);
+    const t = inRange(d) ? (getGomi(d) || NONE) : NONE;
+    const chip = document.createElement('div');
+    chip.className = 'day-chip' + (ymd(d)===ymd(base) ? ' is-today' : '');
+    chip.innerHTML = `
+      <div class="dow">${DOW_JP[d.getDay()]}</div>
+      <div class="dnum">${d.getDate()}</div>
+      <div class="dot" style="background:var(${t.bg})"></div>
+      <div class="glabel">${t===NONE ? '' : t.icon}</div>
+    `;
+    strip.appendChild(chip);
+  }
+}
+
+let viewYear, viewMonth; // viewMonth: 0-11
+function renderMonth(){
+  const first = new Date(viewYear, viewMonth, 1);
+  document.getElementById('monthTitle').textContent = `${viewYear}年 ${viewMonth+1}月`;
+
+  const grid = document.getElementById('monthGrid');
+  grid.innerHTML = '';
+  DOW_JP.forEach(w=>{
+    const h = document.createElement('div');
+    h.className='dow-h'; h.textContent=w; grid.appendChild(h);
+  });
+
+  const startDow = first.getDay();
+  const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+  const today = new Date();
+  const todayStr = ymd(new Date(today.getFullYear(),today.getMonth(),today.getDate()));
+
+  for (let i=0;i<startDow;i++){
+    const b = document.createElement('div'); b.className='cell blank'; grid.appendChild(b);
+  }
+  for (let day=1; day<=daysInMonth; day++){
+    const d = new Date(viewYear, viewMonth, day);
+    const cell = document.createElement('div');
+    cell.className = 'cell' + (ymd(d)===todayStr ? ' today-mark' : '');
+    if (inRange(d)){
+      const t = getGomi(d);
+      if (t){
+        cell.style.background = `var(${t.bg})`;
+        cell.style.color = `var(${t.ink})`;
+        cell.innerHTML = `<div class="cn">${day}</div><div class="cl">${t.name.replace('/', '/​')}</div>`;
+      } else {
+        cell.innerHTML = `<div class="cn" style="opacity:.55">${day}</div>`;
+      }
+    } else {
+      cell.innerHTML = `<div class="cn" style="opacity:.3">${day}</div>`;
+    }
+    grid.appendChild(cell);
+  }
+
+  renderLegend();
+}
+
+function renderLegend(){
+  const legend = document.getElementById('legend');
+  legend.innerHTML = '';
+  Object.values(TYPES).forEach(t=>{
+    const li = document.createElement('div');
+    li.className='li';
+    li.innerHTML = `<span class="sw" style="background:var(${t.bg})"></span>${t.name}`;
+    legend.appendChild(li);
+  });
+}
+
+document.getElementById('prevM').addEventListener('click', ()=>{
+  viewMonth--; if (viewMonth<0){ viewMonth=11; viewYear--; }
+  renderMonth();
+});
+document.getElementById('nextM').addEventListener('click', ()=>{
+  viewMonth++; if (viewMonth>11){ viewMonth=0; viewYear++; }
+  renderMonth();
+});
+
+(function init(){
+  const now = new Date();
+  viewYear = now.getFullYear();
+  viewMonth = now.getMonth();
+  if (!inRange(new Date(now.getFullYear(),now.getMonth(),now.getDate()))){
+    viewYear = 2026; viewMonth = 3; // default to April 2026 if outside range
+  }
+  renderToday();
+  renderWeekStrip();
+  renderMonth();
+})();
+
+// --- 日付が変わったら「TODAY」を自動で更新する（アプリを開きっぱなしにしても翌日ズレない） ---
+let lastRenderedDay = ymd(new Date());
+function refreshIfDayChanged(){
+  const nowStr = ymd(new Date());
+  if (nowStr !== lastRenderedDay){
+    lastRenderedDay = nowStr;
+    renderToday();
+    renderWeekStrip();
+    renderMonth();
+  }
+}
+document.addEventListener('visibilitychange', ()=>{ if (!document.hidden) refreshIfDayChanged(); });
+window.addEventListener('pageshow', refreshIfDayChanged);
+setInterval(refreshIfDayChanged, 60000);
+
+// --- オフラインでも開けるようにする ---
+if ('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
