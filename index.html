@@ -456,6 +456,16 @@ if ('serviceWorker' in navigator){
     try {
       await navigator.serviceWorker.register('sw.js');
       await navigator.serviceWorker.ready;
+      // 初回登録直後はまだこのページが Service Worker の管理下に入っていない。
+      // 管理下に入る前に fetch すると Service Worker を素通りしてキャッシュされないので待つ。
+      if (!navigator.serviceWorker.controller){
+        await new Promise((done)=>{
+          const timer = setTimeout(done, 8000);
+          navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+            clearTimeout(timer); done();
+          }, { once: true });
+        });
+      }
       // 初回訪問では Service Worker が動き出す前にフォントの読み込みが終わってしまう。
       // 表示に使われたフォントをもう一度取得し直して、初回からオフラインで使えるようにする。
       if (document.fonts && document.fonts.ready) await document.fonts.ready;
