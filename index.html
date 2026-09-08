@@ -452,8 +452,21 @@ setInterval(refreshIfDayChanged, 60000);
 
 // --- オフラインでも開けるようにする ---
 if ('serviceWorker' in navigator){
-  window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  window.addEventListener('load', async ()=>{
+    try {
+      await navigator.serviceWorker.register('sw.js');
+      await navigator.serviceWorker.ready;
+      // 初回訪問では Service Worker が動き出す前にフォントの読み込みが終わってしまう。
+      // 表示に使われたフォントをもう一度取得し直して、初回からオフラインで使えるようにする。
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      const seen = new Set();
+      for (const e of performance.getEntriesByType('resource')){
+        if (/^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(e.name) && !seen.has(e.name)){
+          seen.add(e.name);
+          fetch(e.name).catch(()=>{});
+        }
+      }
+    } catch (e) { /* オフライン時などは黙って諦める */ }
   });
 }
 </script>
